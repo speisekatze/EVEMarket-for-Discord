@@ -1,4 +1,4 @@
-from lib import market
+from src import market
 from conf import config
 import time
 import asyncio
