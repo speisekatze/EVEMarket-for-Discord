@@ -48,10 +48,9 @@ async def on_message(message):
         erze = await get_market(tmp)
         await message.channel.send(erze)
     elif message.content.startswith('!id'):
-        conn = http.client.HTTPSConnection(config.market.server)
         arg = message.content.split(' ')[1]
         await message.channel.send('Suche ID zu %s' % (arg))
-        type_id = market.get_id_esi(conn,arg)
+        type_id = market.get_id_esi(arg)
         if type_id == 0:
             await message.channel.send('ID nicht gefunden')
         else:

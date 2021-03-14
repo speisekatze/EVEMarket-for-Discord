@@ -166,14 +166,14 @@ def get_pages(conn,region,type_id,order_type):
     while 1==1:
         conn.request('GET',route+'/?datasource=tranquility&language=de&order_type='+order_type+'&page='+str(page)+'&type_id='+str(type_id),'',conf.headers)
 
-        response = conn.getresponse();
+        response = conn.getresponse()
         result = response.read().decode()
-        if result == "[]":
+        if result == '{"error":"Requested page does not exist!"}':
             break
         if json_string == "":
             json_string += result
         else:
-            json_string += ', '+result;
+            json_string += ', '+result
         page += 1
     return json.loads('['+json_string.replace('[','').replace(']','')+']')
 
@@ -224,6 +224,7 @@ def get_id_esi(type_name):
     global conf
     global conn
     data = '[ "'+type_name+'" ]'
+    conn = http.client.HTTPSConnection(conf.server)
     conn.request('POST',conf.routes['ids']+'/?datasource=tranquility&language=de',data,conf.headers)
 
     response = conn.getresponse()
@@ -241,6 +242,7 @@ def get_name_esi(type_id):
     global conf
     global conn
     data = '[ '+str(type_id)+' ]'
+    conn = http.client.HTTPSConnection(conf.server)
     conn.request('POST',conf.routes['names']+'/?datasource=tranquility&language=de',data,conf.headers)
 
     response = conn.getresponse()
@@ -336,7 +338,6 @@ def run():
     response = conn.getresponse()
     result = response.read().decode()
     types = json.loads(result)
-    
     i = 1
     for erz in erze:
         price = find_max(get_pages(conn,conf.region,get_id(erz,types['inventory_types']),'buy'))
