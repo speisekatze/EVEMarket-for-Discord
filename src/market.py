@@ -42,6 +42,17 @@ erze = [
     "Compressed Glazed Hedbergite",
     "Compressed Vitric Hedbergite"
 ]
+minerals = [
+    "Tritanium"
+    "Pyerite"
+    "Mexallon"
+    "Isogen"
+    "Nocxium"
+    "Zydrine"
+    "Megacyte"
+    "Morphite"
+    "Chromodynamic Tricarboxyls"
+]
 
 regions = [
   10000001,
@@ -330,12 +341,11 @@ def find_deal(order_type,type_name):
     return price
     
 
-def run():
+def run(itemlist):
     global conf
     global conn
     
-    l = max([len(x) for x in erze]) + 20
-    data = '[ "'+'", "'.join(erze)+ '" ]'
+    data = '[ "'+'", "'.join(itemlist)+ '" ]'
     conn = http.client.HTTPSConnection(conf.server)
     conn.request('POST',conf.routes['ids']+'/?datasource=tranquility&language=de',data,conf.headers)
 
@@ -344,7 +354,7 @@ def run():
     types = json.loads(result)
 
     m = [ ['Name', 'Preis'], ]
-    for erz in erze:
+    for item in itemlist:
         price = find_max(get_pages(conn,conf.region,get_id(erz,types['inventory_types']),'buy'))
         total = locale.format_string('%.2f', price, True, True)
         m.append([erz,total])
