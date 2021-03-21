@@ -3,6 +3,7 @@ class market:
     #the forge
     region = 10000002
     home = 30001679
+    home_name = 'Unkah'
     server = 'esi.evetech.net'
     routes = {
         'ids' : '/latest/universe/ids',
