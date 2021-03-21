@@ -58,7 +58,7 @@ async def on_message(message):
         else:
             await message.channel.send(type_id)
     elif message.content.startswith('!die'):
-        if message.author.id == conf.owner:
+        if message.author.id == market.conf.owner:
             await message.channel.send('Bye')
             client.destroy()
     elif message.content.startswith('!deal'):
