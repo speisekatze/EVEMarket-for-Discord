@@ -1,4 +1,5 @@
 import http.client
+from terminaltables import AsciiTable
 import json
 
 #erze
@@ -330,7 +331,8 @@ def find_deal(order_type,type_name):
 def run():
     global conf
     global conn
-    out_string = ''
+    
+    l = max([len(x) for x in erze]) + 20
     data = '[ "'+'", "'.join(erze)+ '" ]'
     conn = http.client.HTTPSConnection(conf.server)
     conn.request('POST',conf.routes['ids']+'/?datasource=tranquility&language=de',data,conf.headers)
@@ -338,17 +340,15 @@ def run():
     response = conn.getresponse()
     result = response.read().decode()
     types = json.loads(result)
-    i = 1
+
+    m = [ ['Name', 'Preis'], ]
     for erz in erze:
         price = find_max(get_pages(conn,conf.region,get_id(erz,types['inventory_types']),'buy'))
-        total = round(price - (price*0.1),0)
-        tabs = '\t'
-        if len(erz) > 30:
-            out_string += '%s: \t %.2f ISK' % (erz,total) + "\n"
-        else:
-            out_string += '%s: \t\t\t\t%.2f ISK' % (erz,total) + "\n"
-        if 0 == (i % 3):
-            out_string += "\n"
-        i += 1
-
+        total = round(price - (price*0.0),0)
+        m.append([erz,total])
+    t = AsciiTable(m)
+    t.justify_columns[1] = 'right'
+    t.inner_heading_row_border = True
+    t.inner_row_border = True
+    out_string = '```' + t.table + '```'
     return out_string
