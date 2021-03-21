@@ -303,13 +303,14 @@ def get_order_detail():
     system = get_system(order['system_id'])
     con = get_constellation(system['constellation_id'])
     region = get_region(con['region_id'])
-    msg = ''
+    msg = '```'
     msg += 'Verfügbare Anzahl: %s\n' % (order['volume_remain'])
     msg += 'Region: %s\n' % (region['name'])
     msg += 'Sternbild: %s\n' % (con['name'])
     msg += 'System: %s\n' % (system['name'])
     msg += 'Standort: %s\n' % (get_location(order['location_id']))
     msg += '%s Sprünge von Unkah\n' % (str(get_distance(order['system_id'])))
+    msg += '```'
     return msg
     
 
