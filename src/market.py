@@ -344,11 +344,11 @@ def run():
     m = [ ['Name', 'Preis'], ]
     for erz in erze:
         price = find_max(get_pages(conn,conf.region,get_id(erz,types['inventory_types']),'buy'))
-        total = round(price - (price*0.0),0)
+        total = locale.format_string('%.2f' price, True, True)
         m.append([erz,total])
     t = AsciiTable(m)
     t.justify_columns[1] = 'right'
     t.inner_heading_row_border = True
-    t.inner_row_border = True
+    t.inner_row_border = False
     out_string = '```' + t.table + '```'
     return out_string
