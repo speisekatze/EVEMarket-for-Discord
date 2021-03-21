@@ -344,7 +344,7 @@ def run():
     m = [ ['Name', 'Preis'], ]
     for erz in erze:
         price = find_max(get_pages(conn,conf.region,get_id(erz,types['inventory_types']),'buy'))
-        total = locale.format_string('%.2f' price, True, True)
+        total = locale.format_string('%.2f', price, True, True)
         m.append([erz,total])
     t = AsciiTable(m)
     t.justify_columns[1] = 'right'
