@@ -2,7 +2,7 @@ import http.client
 from terminaltables import AsciiTable
 import json
 import locale 
-
+locale.setlocale(locale.LC_ALL, 'de_DE')
 
 #erze
 erze = [
