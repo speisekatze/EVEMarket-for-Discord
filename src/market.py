@@ -308,7 +308,7 @@ def get_order_detail():
     msg += 'Sternbild: %s\n' % (con['name'])
     msg += 'System: %s\n' % (system['name'])
     msg += 'Standort: %s\n' % (get_location(order['location_id']))
-    msg += '%s Sprünge von %s\n' % (str(get_distance(order['system_id']))) , str(conf.home_name)
+    msg += '%s Sprünge von %s\n' % (str(get_distance(order['system_id'])) , str(conf.home_name))
     msg += '```'
     return msg
     
