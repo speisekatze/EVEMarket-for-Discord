@@ -60,7 +60,8 @@ async def on_message(message):
     elif message.content.startswith('!die'):
         if message.author.id == market.conf.owner:
             await message.channel.send('Bye')
-            client.destroy()
+            client.close()
+            exit()
     elif message.content.startswith('!deal'):
         order_type = message.content.split(' ')[1]
         type_name = ' '.join(message.content.split(' ')[2:])
