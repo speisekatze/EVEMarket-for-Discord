@@ -4,6 +4,9 @@ import time
 import asyncio
 import discord
 import http.client
+import locale
+
+locale.setlocale(locale.LC_ALL, 'de')
 
 client = discord.Client()
 market_time = 0
