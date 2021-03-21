@@ -1,6 +1,8 @@
 import http.client
 from terminaltables import AsciiTable
 import json
+import locale 
+
 
 #erze
 erze = [
