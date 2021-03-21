@@ -1,5 +1,6 @@
 
 class market:
+    owner = 77786
     #the forge
     region = 10000002
     home = 30001679
