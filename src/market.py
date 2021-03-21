@@ -355,9 +355,9 @@ def run(itemlist):
 
     m = [ ['Name', 'Preis'], ]
     for item in itemlist:
-        price = find_max(get_pages(conn,conf.region,get_id(erz,types['inventory_types']),'buy'))
+        price = find_max(get_pages(conn,conf.region,get_id(item,types['inventory_types']),'buy'))
         total = locale.format_string('%.2f', price, True, True)
-        m.append([erz,total])
+        m.append([item,total])
     t = AsciiTable(m)
     t.justify_columns[1] = 'right'
     t.inner_heading_row_border = True
