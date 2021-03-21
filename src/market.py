@@ -215,7 +215,7 @@ def get_id(type_name,types):
 def get_distance(target):
     global conf
     global conn
-    conn.request('GET','/latest/route/%s/%s/?datasource=tranquility&language=de' % (str(conf.unkah),str(target)),'',conf.headers)
+    conn.request('GET','/latest/route/%s/%s/?datasource=tranquility&language=de' % (str(conf.home),str(target)),'',conf.headers)
 
     response = conn.getresponse()
     result = response.read().decode()
@@ -299,7 +299,6 @@ def get_system(system):
     
 def get_order_detail():
     global order
-    print(order)
     system = get_system(order['system_id'])
     con = get_constellation(system['constellation_id'])
     region = get_region(con['region_id'])
@@ -309,7 +308,7 @@ def get_order_detail():
     msg += 'Sternbild: %s\n' % (con['name'])
     msg += 'System: %s\n' % (system['name'])
     msg += 'Standort: %s\n' % (get_location(order['location_id']))
-    msg += '%s Sprünge von Unkah\n' % (str(get_distance(order['system_id'])))
+    msg += '%s Sprünge von %s\n' % (str(get_distance(order['system_id']))) , str(conf.home_name)
     msg += '```'
     return msg
     
