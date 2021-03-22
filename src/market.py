@@ -43,14 +43,14 @@ erze = [
     "Compressed Vitric Hedbergite"
 ]
 minerals = [
-    "Tritanium"
-    "Pyerite"
-    "Mexallon"
-    "Isogen"
-    "Nocxium"
-    "Zydrine"
-    "Megacyte"
-    "Morphite"
+    "Tritanium",
+    "Pyerite",
+    "Mexallon",
+    "Isogen",
+    "Nocxium",
+    "Zydrine",
+    "Megacyte",
+    "Morphite",
     "Chromodynamic Tricarboxyls"
 ]
 
