@@ -33,7 +33,7 @@ async def get_mineral(tmp):
     global cached_market_mineral
     if (now - market_mineral_time) > 3600:
         await tmp.edit(content="Hole frische Daten")
-        cached_market_mineral = market.run(market.erze)
+        cached_market_mineral = market.run(market.minerals)
         market_mineral_time = now
     else:
         await tmp.edit(content="Hole Daten aus Cache")
