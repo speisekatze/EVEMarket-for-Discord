@@ -1,0 +1,41 @@
+ores = [
+    { "id": 28432, "name": "Compressed Veldspar" },
+    { "id": 28430, "name": "Compressed Concentrated Veldspar" },
+    { "id": 28431, "name": "Compressed Dense Veldspar" },
+    { "id": 28429, "name": "Compressed Scordite" },
+    { "id": 28427, "name": "Compressed Condensed Scordite" },
+    { "id": 28428, "name": "Compressed Massive Scordite" },
+    { "id": 28424, "name": "Compressed Pyroxeres" },
+    { "id": 28425, "name": "Compressed Solid Pyroxeres" },
+    { "id": 28426, "name": "Compressed Viscous Pyroxeres" },
+    { "id": 28422, "name": "Compressed Plagioclase" },
+    { "id": 28421, "name": "Compressed Azure Plagioclase" },
+    { "id": 28423, "name": "Compressed Rich Plagioclase" },
+    { "id": 28416, "name": "Compressed Omber" },
+    { "id": 28417, "name": "Compressed Silvery Omber" },
+    { "id": 28415, "name": "Compressed Golden Omber" },
+    { "id": 28410, "name": "Compressed Kernite" },
+    { "id": 28411, "name": "Compressed Luminous Kernite" },
+    { "id": 28409, "name": "Compressed Fiery Kernite" },
+    { "id": 28406, "name": "Compressed Jaspet" },
+    { "id": 28407, "name": "Compressed Pristine Jaspet" },
+    { "id": 28408, "name": "Compressed Pure Jaspet" },
+    { "id": 28403, "name": "Compressed Hemorphite" },
+    { "id": 28405, "name": "Compressed Vivid Hemorphite" },
+    { "id": 28404, "name": "Compressed Radiant Hemorphite" },
+    { "id": 28401, "name": "Compressed Hedbergite" },
+    { "id": 28400, "name": "Compressed Glazed Hedbergite" },
+    { "id": 28402, "name": "Compressed Vitric Hedbergite" }
+]
+
+minerals = [
+    { "id": 38, "name": "Nocxium" },
+    { "id": 39, "name": "Zydrine" },
+    { "id": 40, "name": "Megacyte" },
+    { "id": 48927, "name": "Chromodynamic Tricarboxyls" },
+    { "id": 34, "name": "Tritanium" },
+    { "id": 35, "name": "Pyerite" },
+    { "id": 36, "name": "Mexallon" },
+    { "id": 37, "name": "Isogen" },
+    { "id": 11399, "name": "Morphite" }
+]
