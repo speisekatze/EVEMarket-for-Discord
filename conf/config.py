@@ -12,4 +12,4 @@ class market:
     headers = { 'Content-Type' : 'application/json', 'Accept': 'application/json',  'Accept-Language': 'de' }
     
 class bot:
-    token = 'NTQ2MjcxOTAwNTI4MTQ4NTAw.D0lzig.5VbYouGktNNYhcHg-c61BzIt0e8'
+    token = 'ODIwNzY1MDI0MzQyNzY5NzE0.YE56_g.fmxHpb-eaGgxKnbvON7Me4MpXUc'
