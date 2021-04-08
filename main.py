@@ -1,5 +1,5 @@
-from src import market
-from conf import config
+from src import market, helper
+from conf import config, itemnames
 import time
 import asyncio
 import discord
@@ -13,14 +13,17 @@ market_mineral_time = 0
 cached_market_ore = ""
 cached_market_mineral = ""
 market.set_conf(config.market)
+#ore = items(ores)
+#mineral = items(minerals)
 
 async def get_ore(tmp):
     now = time.time()
+    ore = helper.items(itemnames.ores)
     global market_ore_time
     global cached_market_ore
     if (now - market_ore_time) > 3600:
         await tmp.edit(content="Hole frische Daten")
-        cached_market_ore = market.run(market.erze)
+        cached_market_ore = market.run(ore.getNames())
         market_ore_time = now
     else:
         await tmp.edit(content="Hole Daten aus Cache")
@@ -29,11 +32,12 @@ async def get_ore(tmp):
 
 async def get_mineral(tmp):
     now = time.time()
+    mineral = helper.items(itemnames.minerals)
     global market_mineral_time
     global cached_market_mineral
     if (now - market_mineral_time) > 3600:
         await tmp.edit(content="Hole frische Daten")
-        cached_market_mineral = market.run(market.minerals)
+        cached_market_mineral = market.run(mineral.getNames())
         market_mineral_time = now
     else:
         await tmp.edit(content="Hole Daten aus Cache")
