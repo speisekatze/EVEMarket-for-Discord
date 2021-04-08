@@ -1,5 +1,8 @@
 import http.client
+from terminaltables import AsciiTable
 import json
+import locale 
+locale.setlocale(locale.LC_ALL, 'de_DE')
 
 #erze
 erze = [
@@ -38,6 +41,17 @@ erze = [
     "Compressed Hedbergite",
     "Compressed Glazed Hedbergite",
     "Compressed Vitric Hedbergite"
+]
+minerals = [
+    "Tritanium",
+    "Pyerite",
+    "Mexallon",
+    "Isogen",
+    "Nocxium",
+    "Zydrine",
+    "Megacyte",
+    "Morphite",
+    "Chromodynamic Tricarboxyls"
 ]
 
 regions = [
@@ -212,7 +226,7 @@ def get_id(type_name,types):
 def get_distance(target):
     global conf
     global conn
-    conn.request('GET','/latest/route/%s/%s/?datasource=tranquility&language=de' % (str(conf.unkah),str(target)),'',conf.headers)
+    conn.request('GET','/latest/route/%s/%s/?datasource=tranquility&language=de' % (str(conf.home),str(target)),'',conf.headers)
 
     response = conn.getresponse()
     result = response.read().decode()
@@ -296,17 +310,17 @@ def get_system(system):
     
 def get_order_detail():
     global order
-    print(order)
     system = get_system(order['system_id'])
     con = get_constellation(system['constellation_id'])
     region = get_region(con['region_id'])
-    msg = ''
+    msg = '```'
     msg += 'Verfügbare Anzahl: %s\n' % (order['volume_remain'])
     msg += 'Region: %s\n' % (region['name'])
     msg += 'Sternbild: %s\n' % (con['name'])
     msg += 'System: %s\n' % (system['name'])
     msg += 'Standort: %s\n' % (get_location(order['location_id']))
-    msg += '%s Sprünge von Unkah\n' % (str(get_distance(order['system_id'])))
+    msg += '%s Sprünge von %s\n' % (str(get_distance(order['system_id'])) , str(conf.home_name))
+    msg += '```'
     return msg
     
 
@@ -327,28 +341,26 @@ def find_deal(order_type,type_name):
     return price
     
 
-def run():
+def run(itemlist):
     global conf
     global conn
-    out_string = ''
-    data = '[ "'+'", "'.join(erze)+ '" ]'
+    
+    data = '[ "'+'", "'.join(itemlist)+ '" ]'
     conn = http.client.HTTPSConnection(conf.server)
     conn.request('POST',conf.routes['ids']+'/?datasource=tranquility&language=de',data,conf.headers)
 
     response = conn.getresponse()
     result = response.read().decode()
     types = json.loads(result)
-    i = 1
-    for erz in erze:
-        price = find_max(get_pages(conn,conf.region,get_id(erz,types['inventory_types']),'buy'))
-        total = round(price - (price*0.1),0)
-        tabs = '\t'
-        if len(erz) > 30:
-            out_string += '%s: \t %.2f ISK' % (erz,total) + "\n"
-        else:
-            out_string += '%s: \t\t\t\t%.2f ISK' % (erz,total) + "\n"
-        if 0 == (i % 3):
-            out_string += "\n"
-        i += 1
 
+    m = [ ['Name', 'Preis'], ]
+    for item in itemlist:
+        price = find_max(get_pages(conn,conf.region,get_id(item,types['inventory_types']),'buy'))
+        total = locale.format_string('%.2f', price, True, True)
+        m.append([item,total])
+    t = AsciiTable(m)
+    t.justify_columns[1] = 'right'
+    t.inner_heading_row_border = True
+    t.inner_row_border = False
+    out_string = '```' + t.table + '```'
     return out_string
