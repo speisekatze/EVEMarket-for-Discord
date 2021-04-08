@@ -4,55 +4,6 @@ import json
 import locale 
 locale.setlocale(locale.LC_ALL, 'de_DE')
 
-#erze
-erze = [
-    "Compressed Veldspar",
-    "Compressed Concentrated Veldspar",
-    "Compressed Dense Veldspar",
-
-    "Compressed Scordite",
-    "Compressed Condensed Scordite",
-    "Compressed Massive Scordite",
-
-    "Compressed Pyroxeres",
-    "Compressed Solid Pyroxeres",
-    "Compressed Viscous Pyroxeres",
-
-    "Compressed Plagioclase",
-    "Compressed Azure Plagioclase",
-    "Compressed Rich Plagioclase",
-
-    "Compressed Omber",
-    "Compressed Silvery Omber",
-    "Compressed Golden Omber",
-
-    "Compressed Kernite",
-    "Compressed Luminous Kernite",
-    "Compressed Fiery Kernite",
-
-    "Compressed Jaspet",
-    "Compressed Pristine Jaspet",
-    "Compressed Pure Jaspet",
-
-    "Compressed Hemorphite",
-    "Compressed Vivid Hemorphite",
-    "Compressed Radiant Hemorphite",
-
-    "Compressed Hedbergite",
-    "Compressed Glazed Hedbergite",
-    "Compressed Vitric Hedbergite"
-]
-minerals = [
-    "Tritanium",
-    "Pyerite",
-    "Mexallon",
-    "Isogen",
-    "Nocxium",
-    "Zydrine",
-    "Megacyte",
-    "Morphite",
-    "Chromodynamic Tricarboxyls"
-]
 
 regions = [
   10000001,
