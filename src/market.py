@@ -194,9 +194,9 @@ def scan(itemlist: helper.items, region=''):
     m = [ ['Name', 'Kauf', 'Verkauf'], ]
     for item in itemlist.items:
         buy = helper.find_max(get_orders(eve, regionid, item['id'], 'buy'))
-        total_b = locale.format_string('%.2f', buy, True, True)
+        total_b = locale.format_string('%.2f', float(buy['price']), True, True)
         sell = helper.find_min(get_orders(eve, regionid, item['id'], 'sell'))
-        total_s = locale.format_string('%.2f', sell, True, True)
+        total_s = locale.format_string('%.2f', float(sell['price']), True, True)
         m.append([item['name'].replace('Compressed', 'comp.'), total_b, total_s])
     t = AsciiTable(m)
     t.justify_columns[1] = 'right'
