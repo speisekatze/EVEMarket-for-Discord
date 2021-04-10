@@ -29,13 +29,13 @@ ores = [
 ]
 
 minerals = [
-    { "id": 38, "name": "Nocxium" },
-    { "id": 39, "name": "Zydrine" },
-    { "id": 40, "name": "Megacyte" },
-    { "id": 48927, "name": "Chromodynamic Tricarboxyls" },
     { "id": 34, "name": "Tritanium" },
     { "id": 35, "name": "Pyerite" },
     { "id": 36, "name": "Mexallon" },
     { "id": 37, "name": "Isogen" },
-    { "id": 11399, "name": "Morphite" }
+    { "id": 38, "name": "Nocxium" },
+    { "id": 39, "name": "Zydrine" },
+    { "id": 40, "name": "Megacyte" },
+    { "id": 11399, "name": "Morphite" },
+    { "id": 48927, "name": "Chromodynamic Tricarboxyls" }
 ]
