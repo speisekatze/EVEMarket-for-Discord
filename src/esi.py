@@ -1,5 +1,6 @@
 import http.client
 import json
+from conf.config import esi as esiconf
 
 
 class esi:
@@ -17,15 +18,16 @@ class esi:
     connection = None
         
 
-    def request(self, endpoint, data=''):
+    def request(self, endpoint, param, data=''):
         ep = self.endpoints[endpoint]
-        request_string = ep['uri']
+        request_string = ep['uri'].format(**param)
+        
         self.connection.request(ep['type'], request_string, data, self.headers)
 
         response = self.connection.getresponse()
         result = response.read().decode()
-        return json.loads(result)
+        return result
     
-    def connect(self, server):
-        self.connection = http.client.HTTPSConnection(server)
+    def connect(self):
+        self.connection = http.client.HTTPSConnection(esiconf.server)
 
