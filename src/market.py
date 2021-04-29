@@ -184,13 +184,13 @@ def find_deal(order_type,type_name):
     return price
 
 
-def scan(itemlist: helper.items, region=''):
+def scan(itemlist: helper.itemlist, region=''):
     eve = esi()
     eve.connect()
-    regionlist = helper.items(regions.regions)
+    regionlist = helper.itemlist(regions.regions)
     if region == '':
         region = 'The Forge'
-    regionid = regionlist.getByName(region)
+    regionid = regionlist.get_by_name(region)
     m = [ ['Name', 'Kauf', 'Verkauf'], ]
     for item in itemlist.items:
         buy = helper.find_max(get_orders(eve, regionid, item['id'], 'buy'))
@@ -203,6 +203,7 @@ def scan(itemlist: helper.items, region=''):
     t.justify_columns[2] = 'right'
     t.inner_heading_row_border = True
     t.inner_row_border = False
+    t.title = region
     out_string = '```' + t.table + '```'
     return out_string
 
