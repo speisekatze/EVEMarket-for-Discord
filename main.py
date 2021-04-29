@@ -17,7 +17,7 @@ market.set_conf(config.market)
 
 async def get_ore(tmp):
     now = time.time()
-    ore = helper.items(itemnames.ores)
+    ore = helper.itemlist(itemnames.ores)
     global market_ore_time
     global cached_market_ore
     if (now - market_ore_time) > 3600:
@@ -31,7 +31,7 @@ async def get_ore(tmp):
 
 async def get_mineral(tmp):
     now = time.time()
-    mineral = helper.items(itemnames.minerals)
+    mineral = helper.itemlist(itemnames.minerals)
     global market_mineral_time
     global cached_market_mineral
     if (now - market_mineral_time) > 3600:
@@ -42,6 +42,36 @@ async def get_mineral(tmp):
         await tmp.edit(content="Hole Daten aus Cache")
     return cached_market_mineral
 
+async def pricelist(message, types='', region=''):
+    if types == '':
+        await message.edit(content='Keine Kategorie angegeben. (!markt erze [The Forge])')
+        return ''
+    types_switch = {
+        'erz'       : { 'i': itemnames.ores, 'name': 'ore' },
+        'erze'      : { 'i': itemnames.ores, 'name': 'ore' },
+        'e'         : { 'i': itemnames.ores, 'name': 'ore' },
+        'minerals'  : { 'i': itemnames.minerals, 'name': 'mineral' },
+        'mineral'   : { 'i': itemnames.minerals, 'name': 'mineral' },
+        'm'         : { 'i': itemnames.minerals, 'name': 'mineral' },
+        'moon'      : { 'i': itemnames.moon, 'name': 'moon' },
+        'gas'       : { 'i': itemnames.gas, 'name': 'gas' },
+        'fullerite' : { 'i': itemnames.fullerite, 'name': 'fullerite' },
+    }
+    if types not in types_switch:
+        await message.edit(content='Unbekannte Kategorie angegeben. (!markt erze [The Forge])')
+        return ''
+    if region == '':
+        region = 'The Forge'
+    items = helper.itemlist(types_switch[types]['i'])
+    cache_name = types_switch[types]['name']
+    cache_store = helper.cache.get(cache_name, region)
+    if cache_store is None:
+        await message.edit(content="Hole frische Daten")
+        cache_store = helper.cache.set(cache_name, region, market.scan(items, region))
+    else:
+        age = str(int((time.time() - cache_store['ts'])/60))
+        await message.edit(content="Hole Daten aus Cache ("+ age +" Minuten alt)")
+    return cache_store['data']
 
 @client.event
 async def on_ready():
@@ -56,7 +86,6 @@ async def on_message(message):
         async for msg in message.channel.history(limit=100):
             if msg.author == message.author:
                 counter += 1
-
         await tmp.edit(content='You have {} messages.'.format(counter))
     elif message.content.startswith('!sleep'):
         with message.channel.typing():
@@ -95,5 +124,14 @@ async def on_message(message):
         else:
             await message.channel.send('{0:,} ISK'.format(type_id))
             await message.channel.send(market.get_order_detail())
+    elif message.content.startswith('!market') or message.content.startswith('!markt'):
+        tmp = await message.channel.send('Hole Daten. Das wird ein paar Sekunden dauern.')
+        if len(message.content.split(' ')) < 2:
+            types = ''
+        else: 
+            types = message.content.split(' ')[1]
+        region = ' '.join(message.content.split(' ')[2:])
+        data = await pricelist(tmp, types, region)
+        await message.channel.send(data)
 
 client.run(config.bot.token)
