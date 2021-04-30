@@ -106,3 +106,13 @@ regions = [
     { "id": 10000040, "name": "Oasa" },
     { "id": 10000042, "name": "Metropolis" }
 ]
+
+hubs = [
+    { "id": 60003760, "name": "Jita IV - Moon 4 - Caldari Navy Assembly Plant", 'enum': 1 },
+    { "id": 60011866, "name": "Dodixie IX - Moon 20 - Federation Navy Assembly Plant", 'enum': 2 },
+    { "id": 60001096, "name": "Tash-Murkon Prime II - Moon 1 - Kaalakiota Corporation Factory", 'enum': 3 },
+    { "id": 60003787, "name": "Motsu VII - Moon 6 - Caldari Navy Logistic Support", 'enum': 4 },
+    { "id": 60008494, "name": "Amarr VIII (Oris) - Emperor Family Academy", 'enum': 5 },
+    { "id": 60004588, "name": "Rens VI - Moon 8 - Brutor Tribe Treasury", 'enum': 6 },
+    { "id": 60005686, "name": "Hek VIII - Moon 12 - Boundless Creation Factory", 'enum': 7 }
+]
