@@ -3,120 +3,25 @@ import json
 from src.esi import esi
 from src import helper
 from conf import regions
+from conf.config import market as marketconfig
 from terminaltables import AsciiTable
 import locale 
 locale.setlocale(locale.LC_ALL, 'de_DE')
 
-
-conf = { }
-conn = object()
-order = { }
-
-def set_conf(c):
-    global conf
-    conf = c
-
-def get_id(type_name,types):
-    for i in types:
-        if i['name'] == type_name:
-            return i['id']
-
-def get_distance(target):
-    global conf
-    global conn
-    conn.request('GET','/latest/route/%s/%s/?datasource=tranquility&language=de' % (str(conf.home),str(target)),'',conf.headers)
-
-    response = conn.getresponse()
-    result = response.read().decode()
-    systems = json.loads(result)
-
-    return len(systems) - 1
-
-def get_id_esi(type_name):
-    global conf
-    global conn
-    data = '[ "'+type_name+'" ]'
-    conn = http.client.HTTPSConnection(conf.server)
-    conn.request('POST',conf.routes['ids']+'/?datasource=tranquility&language=de',data,conf.headers)
-
-    response = conn.getresponse()
-    result = response.read().decode()
-    types = json.loads(result)
-    if 'inventory_types' in types and len(types['inventory_types']) > 0:
-        return types['inventory_types'][0]['id']
-    elif 'station' in types and len(types['station']) > 0:
-        return types['station']
-    else:
-        return 0
-
-
-def get_name_esi(type_id):
-    global conf
-    global conn
-    data = '[ '+str(type_id)+' ]'
-    conn = http.client.HTTPSConnection(conf.server)
-    conn.request('POST',conf.routes['names']+'/?datasource=tranquility&language=de',data,conf.headers)
-
-    response = conn.getresponse()
-    result = response.read().decode()
-    types = json.loads(result)
-    
-    if 'name' in types[0]:
-        return types[0]['name']
-    else:
-        return 0
-
-
-def get_location(location_id):
-    if location_id >= 4294967295:
-        return 'Eine Station eines Spielers'
-    else:
-        return get_name_esi(location_id)
-
-def get_region(region):
-    global conf
-    global conn
-
-    conn.request('GET','/latest/universe/regions/'+str(region)+'/?datasource=tranquility&language=de','',conf.headers)
-    response = conn.getresponse()
-    result = response.read().decode()
-    region = json.loads(result)
-    
-    return region
-        
-def get_constellation(constellation):
-    global conf
-    global conn
-
-    conn.request('GET','/latest/universe/constellations/'+str(constellation)+'/?datasource=tranquility&language=de','',conf.headers)
-    response = conn.getresponse()
-    result = response.read().decode()
-    constellation = json.loads(result)
-    
-    return constellation
-    
-def get_system(system):
-    global conf
-    global conn
-
-    conn.request('GET','/latest/universe/systems/'+str(system)+'/?datasource=tranquility&language=de','',conf.headers)
-    response = conn.getresponse()
-    result = response.read().decode()
-    system = json.loads(result)
-    
-    return system
     
 def get_order_detail(order):
-    system = get_system(order['system_id'])
-    con = get_constellation(system['constellation_id'])
-    region = get_region(con['region_id'])
+    eve = esi()
+    eve.connect()
+    system = query(eve, 'system', order['system_id'])
+    con = query(eve, 'constellation', system['constellation_id'])
+    region = query(eve, 'region', con['region_id'])
     msg = '```'
     msg += 'Verfügbare Anzahl: %s\n' % (order['volume_remain'])
     msg += 'Region: %s\n' % (region['name'])
     msg += 'Sternbild: %s\n' % (con['name'])
     msg += 'System: %s\n' % (system['name'])
-    msg += 'Standort: %s\n' % (get_location(order['location_id']))
-    msg += '%s Sprünge von %s\n' % (str(get_distance(order['system_id'])) , str(conf.home_name))
+    msg += 'Standort: %s\n' % (get_location(eve, order['location_id']))
+    msg += '%s Sprünge von %s\n' % (str(get_distance(eve, order['system_id'])) , str(marketconfig.home_name))
     msg += '```'
     return msg
 
@@ -177,12 +82,7 @@ def get_orders(eve, region_id, item_id, order_type):
 
 def get_esi_id(eve, type_name):
     data = '[ "'+type_name+'" ]'
-    conn = http.client.HTTPSConnection(conf.server)
-    conn.request('POST',conf.routes['ids']+'/?datasource=tranquility&language=de',data,conf.headers)
-    eve.request('ids', {}, data)
-
-    response = conn.getresponse()
-    result = response.read().decode()
+    result = eve.request('ids', {}, data)
     types = json.loads(result)
     if 'inventory_types' in types and len(types['inventory_types']) > 0:
         return types['inventory_types'][0]['id']
@@ -190,3 +90,44 @@ def get_esi_id(eve, type_name):
         return types['station']
     else:
         return 0
+
+def get_esi_name(eve, type_id):
+    data = '[ '+str(type_id)+' ]'
+    result = eve.request('ids', {}, data)
+    types = json.loads(result)
+    if 'name' in types[0]:
+        return types[0]['name']
+    else:
+        return 0
+
+def get_distance(eve, target):
+    result = eve.request('route', { 'start': str(marketconfig.home), 'end': str(target)})
+    systems = json.loads(result)
+    return len(systems) - 1
+
+def get_location(eve, location_id):
+    if location_id >= 4294967295:
+        return 'Eine Station eines Spielers'
+    else:
+        return get_esi_name(eve, location_id)
+
+def get_region(eve, region):
+    result = eve.request('region', { 'region': region})
+    region = json.loads(result)
+    return region
+        
+def get_constellation(eve, constellation):
+    result = eve.request('constellation', { 'constellation': constellation})
+    constellation = json.loads(result)
+    return constellation
+    
+def get_system(eve, system):
+    result = eve.request('system', { 'system': system})
+    system = json.loads(result)
+    return system
+
+def query(eve, typ, id):
+    if typ not in ['system', 'region', 'constellation']:
+        return None
+    result = eve.request(typ, { typ : id})
+    return json.loads(result)
