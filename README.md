@@ -4,13 +4,12 @@
  EVE Online Market Bot
 
 # Commands
-!markt <Kategorie> [region]
+```
+ !markt <Kategorie> [region]
+ !market <category> [region]
  
-!market <category> [region]
-
-
-!deal <buy|sell> <item name>
- 
+ !deal <buy|sell> <item name>
+ ```
  # Kategorien / Categories
  erz, erze, ore, ores, mineral, minerals, mond, moon, gas, fullerite
  
