@@ -22,7 +22,7 @@ def get_pages(conn,region,type_id,order_type):
     page = 1
     route = conf.routes['market'].replace('#region#',str(region))
     
-    while 1==1:
+    while True:
         conn.request('GET',route+'/?datasource=tranquility&language=de&order_type='+order_type+'&page='+str(page)+'&type_id='+str(type_id),'',conf.headers)
 
         response = conn.getresponse()
@@ -210,7 +210,7 @@ def scan(itemlist: helper.itemlist, region=''):
 def get_orders(eve, region_id, item_id, order_type):
     page = 1
     json_string = ""
-    while 1==1:
+    while True:
         orders = eve.request('market', {'region': region_id, 'order_type': order_type, 'page': page, 'type_id': item_id }, '')
         if orders == '{"error":"Requested page does not exist!"}':
             break

@@ -15,33 +15,6 @@ cached_market_mineral = ""
 market.set_conf(config.market)
 
 
-async def get_ore(tmp):
-    now = time.time()
-    ore = helper.itemlist(itemnames.ores)
-    global market_ore_time
-    global cached_market_ore
-    if (now - market_ore_time) > 3600:
-        await tmp.edit(content="Hole frische Daten")
-        cached_market_ore = market.scan(ore)
-        market_ore_time = now
-    else:
-        await tmp.edit(content="Hole Daten aus Cache")
-    return cached_market_ore
-
-
-async def get_mineral(tmp):
-    now = time.time()
-    mineral = helper.itemlist(itemnames.minerals)
-    global market_mineral_time
-    global cached_market_mineral
-    if (now - market_mineral_time) > 3600:
-        await tmp.edit(content="Hole frische Daten")
-        cached_market_mineral = market.scan(mineral)
-        market_mineral_time = now
-    else:
-        await tmp.edit(content="Hole Daten aus Cache")
-    return cached_market_mineral
-
 async def pricelist(message, types='', region=''):
     if types == '':
         await message.edit(content='Keine Kategorie angegeben. (!markt erze [The Forge])')
@@ -91,14 +64,8 @@ async def on_message(message):
         with message.channel.typing():
             await asyncio.sleep(5)
             await message.channel.send('Done sleeping')
-    elif message.content.startswith('!erze'):
-        tmp = await message.channel.send('Hole Daten. Das wird ein paar Sekunden dauern.')
-        erze = await get_ore(tmp)
-        await message.channel.send(erze)
-    elif message.content.startswith('!mineral'):
-        tmp = await message.channel.send('Hole Daten. Das wird ein paar Sekunden dauern.')
-        mineral = await get_mineral(tmp)
-        await message.channel.send(mineral)
+    elif message.content.startswith('!erze') or message.content.startswith('!mineral'):
+        tmp = await message.channel.send('Bitte nutze !markt <Kategorie> [region]')
     elif message.content.startswith('!id'):
         arg = message.content.split(' ')[1]
         await message.channel.send('Suche ID zu %s' % (arg))
