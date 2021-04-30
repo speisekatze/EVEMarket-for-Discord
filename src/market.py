@@ -174,7 +174,7 @@ def get_region_id(region):
         region = 'The Forge'
     return regionlist.get_by_name(region)
 
-def find_deal(order_type, type_name, region):
+def find_deal(order_type, type_name, region=''):
     order = None
     eve = esi()
     eve.connect()
