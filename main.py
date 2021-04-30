@@ -8,11 +8,6 @@ import locale
 locale.setlocale(locale.LC_ALL, 'de_DE')
 
 client = discord.Client()
-market_ore_time = 0
-market_mineral_time = 0
-cached_market_ore = ""
-cached_market_mineral = ""
-market.set_conf(config.market)
 
 
 async def pricelist(message, types='', region=''):
@@ -23,10 +18,14 @@ async def pricelist(message, types='', region=''):
         'erz'       : { 'i': itemnames.ores, 'name': 'ore' },
         'erze'      : { 'i': itemnames.ores, 'name': 'ore' },
         'e'         : { 'i': itemnames.ores, 'name': 'ore' },
+        'ore'       : { 'i': itemnames.ores, 'name': 'ore' },
+        'ores'      : { 'i': itemnames.ores, 'name': 'ore' },
+        'o'         : { 'i': itemnames.ores, 'name': 'ore' },
         'minerals'  : { 'i': itemnames.minerals, 'name': 'mineral' },
         'mineral'   : { 'i': itemnames.minerals, 'name': 'mineral' },
         'm'         : { 'i': itemnames.minerals, 'name': 'mineral' },
         'moon'      : { 'i': itemnames.moon, 'name': 'moon' },
+        'mond'      : { 'i': itemnames.moon, 'name': 'moon' },
         'gas'       : { 'i': itemnames.gas, 'name': 'gas' },
         'fullerite' : { 'i': itemnames.fullerite, 'name': 'fullerite' },
     }
@@ -66,16 +65,8 @@ async def on_message(message):
             await message.channel.send('Done sleeping')
     elif message.content.startswith('!erze') or message.content.startswith('!mineral'):
         await message.channel.send('Bitte nutze !markt <Kategorie> [region]')
-    elif message.content.startswith('!id'):
-        arg = message.content.split(' ')[1]
-        await message.channel.send('Suche ID zu %s' % (arg))
-        type_id = market.get_id_esi(arg)
-        if type_id == 0:
-            await message.channel.send('ID nicht gefunden')
-        else:
-            await message.channel.send(type_id)
     elif message.content.startswith('!die'):
-        if message.author.id == market.conf.owner:
+        if message.author.id == market.marketconfig.owner:
             await message.channel.send('Bye')
             await client.logout()
             await client.close()
@@ -83,14 +74,15 @@ async def on_message(message):
         order_type = message.content.split(' ')[1]
         type_name = ' '.join(message.content.split(' ')[2:])
         await message.channel.send('Suche Preis zu %s' % (type_name))
-        type_id = market.find_deal(order_type,type_name)
-        if type_id == -2:
+        order = market.find_deal(order_type,type_name)
+        if order == -2:
             await message.channel.send('Artikel nicht gefunden')
-        elif type_id == 0:
+        elif order['price'] == 0:
             await message.channel.send('Kein Preis verfügbar')
         else:
-            await message.channel.send('{0:,} ISK'.format(type_id))
-            await message.channel.send(market.get_order_detail())
+            price = locale.format_string('%.2f', float(order['price']), True, True)
+            await message.channel.send('{0} ISK'.format(price))
+            await message.channel.send(market.get_order_detail(order))
     elif message.content.startswith('!market') or message.content.startswith('!markt'):
         tmp = await message.channel.send('Hole Daten. Das wird ein paar Sekunden dauern.')
         if len(message.content.split(' ')) < 2:
