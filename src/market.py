@@ -16,53 +16,6 @@ def set_conf(c):
     global conf
     conf = c
 
-def get_pages(conn,region,type_id,order_type):
-    global conf
-    json_string = ""
-    page = 1
-    route = conf.routes['market'].replace('#region#',str(region))
-    
-    while True:
-        conn.request('GET',route+'/?datasource=tranquility&language=de&order_type='+order_type+'&page='+str(page)+'&type_id='+str(type_id),'',conf.headers)
-
-        response = conn.getresponse()
-        result = response.read().decode()
-        if result == '{"error":"Requested page does not exist!"}':
-            break
-        if json_string == "":
-            json_string += result
-        else:
-            json_string += ', '+result
-        page += 1
-    return json.loads('['+json_string.replace('[','').replace(']','')+']')
-
-
-def find_max(market):
-    global order
-    max_price = 0
-    for m in market:
-        if max_price == 0:
-            max_price = float(m['price'])
-            order = m
-            continue
-        if float(m['price']) > max_price:
-            max_price = float(m['price'])
-            order = m
-    return max_price
-
-def find_min(market):
-    global order
-    min_price = 0
-    for m in market:
-        if min_price == 0:
-            min_price = float(m['price'])
-            order = m
-            continue
-        if float(m['price']) < min_price:
-            min_price = float(m['price'])
-            order = m
-    return min_price
-
 def get_id(type_name,types):
     for i in types:
         if i['name'] == type_name:
