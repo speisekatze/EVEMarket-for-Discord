@@ -153,8 +153,7 @@ def get_system(system):
     
     return system
     
-def get_order_detail():
-    global order
+def get_order_detail(order):
     system = get_system(order['system_id'])
     con = get_constellation(system['constellation_id'])
     region = get_region(con['region_id'])
@@ -167,30 +166,32 @@ def get_order_detail():
     msg += '%s Sprünge von %s\n' % (str(get_distance(order['system_id'])) , str(conf.home_name))
     msg += '```'
     return msg
-    
 
-def find_deal(order_type,type_name):
-    global conf
-    global conn
-    conn = http.client.HTTPSConnection(conf.server)
 
-    type_id = get_id_esi(type_name)
+def get_region_id(region):
+    regionlist = helper.itemlist(regions.regions)
+    if region == '':
+        region = 'The Forge'
+    return regionlist.get_by_name(region)
+
+def find_deal(order_type, type_name, region):
+    order = None
+    eve = esi()
+    eve.connect()
+    regionid = get_region_id(region)
+    type_id = get_esi_id(eve, type_name)
     if type_id == 0:
         return -2
     if order_type == 'buy':
-        price = find_max(get_pages(conn,conf.region,type_id,order_type))
+        order = helper.find_max(get_orders(eve, regionid, type_id, 'buy'))
     else:
-        price = find_min(get_pages(conn,conf.region,type_id,order_type))
-    return price
-
+        order = helper.find_min(get_orders(eve, regionid, type_id, 'sell'))
+    return order
 
 def scan(itemlist: helper.itemlist, region=''):
     eve = esi()
     eve.connect()
-    regionlist = helper.itemlist(regions.regions)
-    if region == '':
-        region = 'The Forge'
-    regionid = regionlist.get_by_name(region)
+    regionid = get_region_id(region)
     m = [ ['Name', 'Kauf', 'Verkauf'], ]
     for item in itemlist.items:
         buy = helper.find_max(get_orders(eve, regionid, item['id'], 'buy'))
@@ -220,3 +221,19 @@ def get_orders(eve, region_id, item_id, order_type):
             json_string += ', '+orders
         page += 1
     return json.loads('['+json_string.replace('[','').replace(']','')+']')
+
+def get_esi_id(eve, type_name):
+    data = '[ "'+type_name+'" ]'
+    conn = http.client.HTTPSConnection(conf.server)
+    conn.request('POST',conf.routes['ids']+'/?datasource=tranquility&language=de',data,conf.headers)
+    eve.request('ids', {}, data)
+
+    response = conn.getresponse()
+    result = response.read().decode()
+    types = json.loads(result)
+    if 'inventory_types' in types and len(types['inventory_types']) > 0:
+        return types['inventory_types'][0]['id']
+    elif 'station' in types and len(types['station']) > 0:
+        return types['station']
+    else:
+        return 0
