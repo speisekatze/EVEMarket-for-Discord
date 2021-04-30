@@ -5,7 +5,9 @@
 
 # Commands
 !markt <Kategorie> [region]
+ 
 !market <category> [region]
+
 
 !deal <buy|sell> <item name>
  
