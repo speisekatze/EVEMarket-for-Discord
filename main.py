@@ -65,7 +65,7 @@ async def on_message(message):
             await asyncio.sleep(5)
             await message.channel.send('Done sleeping')
     elif message.content.startswith('!erze') or message.content.startswith('!mineral'):
-        tmp = await message.channel.send('Bitte nutze !markt <Kategorie> [region]')
+        await message.channel.send('Bitte nutze !markt <Kategorie> [region]')
     elif message.content.startswith('!id'):
         arg = message.content.split(' ')[1]
         await message.channel.send('Suche ID zu %s' % (arg))
