@@ -35,12 +35,12 @@ class list:
     store = None
 
     def __init__(self, itemdict):
-        self.keys = itemdict.keys()
+        self.keys = itemdict[0].keys()
         self.store = {}
         for k in self.keys:
             self.store[k] = {}
             for item in itemdict:
-                store[k][item[k]] = item
+                self.store[k][item[k]] = item
 
     def get_by(self, key, value):
         if key not in self.keys or value not in self.store[key]:
