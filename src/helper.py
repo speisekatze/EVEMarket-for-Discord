@@ -1,5 +1,5 @@
 import time
-
+from conf import regions as data
 
 class itemlist:
     items = None
@@ -29,6 +29,36 @@ class itemlist:
     def get_names(self):
         return self.ids.values()
 
+class list:
+    items = None
+    keys = None
+    store = None
+
+    def __init__(self, itemdict):
+        self.keys = itemdict.keys()
+        self.store = {}
+        for k in self.keys:
+            self.store[k] = {}
+            for item in itemdict:
+                store[k][item[k]] = item
+
+    def get_by(self, key, value):
+        if key not in self.keys or value not in self.store[key]:
+            return None
+        return self.store[key][value]
+
+    def get_all(self, key):
+        if key not in self.keys:
+            return None
+        return self.store[key]
+
+    def get_possible_values(self, key):
+        if key not in self.keys:
+            return None
+        return self.store[key].keys()
+
+    def get_keys(self):
+        return self.keys
 
 class _cache:
     store = {}
@@ -51,20 +81,26 @@ class _cache:
         return None
 
 
-def find_max(market):
+def find_max(market, station=0):
     order = {"price": 0.00}
     for m in market:
-        if float(m["price"]) > float(order["price"]):
+        if (float(m["price"]) > float(order["price"])) and (
+            station == 0 or m["location"] == station
+        ):
             order = m
     return order
 
 
-def find_min(market):
+def find_min(market, station=0):
     order = {"price": 0.00}
     for m in market:
-        if float(order["price"]) == 0.00 or float(m["price"]) < float(order["price"]):
+        if (
+            float(order["price"]) == 0.00 or float(m["price"]) < float(order["price"])
+        ) and (station == 0 or m["location"] == station):
             order = m
     return order
 
 
 cache = _cache()
+regions = list(data.regions)
+hubs = list(data.hubs)
