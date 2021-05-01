@@ -51,8 +51,16 @@ def find_deal(order_type, type_name, region=""):
         order = helper.find_min(get_orders(eve, regionid, type_id, "sell"))
     return order
 
+def tradehub(itemlist: helper.itemlist, value=""):
+    key = 'short'
+    if value == "":
+        value = "Jita"
+    if value in helper.hubs.get_possible_values('enum'):
+        key = 'enum'
+    hub = helper.hubs.get_by(key, value)
+    return scan(itemlist, hub['region'], hub['id'])
 
-def scan(itemlist: helper.itemlist, region=""):
+def scan(itemlist: helper.itemlist, region="", station=0):
     eve = esi()
     eve.connect()
     regionid = get_region_id(region)
@@ -60,9 +68,9 @@ def scan(itemlist: helper.itemlist, region=""):
         ["Name", "Kauf", "Verkauf"],
     ]
     for item in itemlist.items:
-        buy = helper.find_max(get_orders(eve, regionid, item["id"], "buy"))
+        buy = helper.find_max(get_orders(eve, regionid, item["id"], "buy"), station)
         total_b = locale.format_string("%.2f", float(buy["price"]), True, True)
-        sell = helper.find_min(get_orders(eve, regionid, item["id"], "sell"))
+        sell = helper.find_min(get_orders(eve, regionid, item["id"], "sell"), station)
         total_s = locale.format_string("%.2f", float(sell["price"]), True, True)
         m.append([item["name"].replace("Compressed", "comp."), total_b, total_s])
     t = AsciiTable(m)
@@ -71,6 +79,8 @@ def scan(itemlist: helper.itemlist, region=""):
     t.inner_heading_row_border = True
     t.inner_row_border = False
     t.title = region
+    if station != 0:
+        t.title = get_location(eve, station)
     out_string = "```" + t.table + "```"
     return out_string
 
