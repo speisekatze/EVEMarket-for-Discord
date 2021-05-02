@@ -2,7 +2,9 @@ from . import market, helper, tradehubs
 from discord.ext import commands
 import time
 import asyncio
+import locale
 
+locale.setlocale(locale.LC_ALL, "de_DE")
 bot = commands.Bot(command_prefix='!')
 
 def user_is_owner(ctx):

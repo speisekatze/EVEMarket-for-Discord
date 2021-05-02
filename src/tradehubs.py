@@ -18,11 +18,7 @@ def list_command(nothing):
     return out_string
 
 def info_command(lookup):
-    hub = None
-    for key in hublist.get_keys():
-        if lookup in hublist.get_possible_values(key):
-            hub = hublist.get_by(key, lookup)
-            break
+    hub = hublist.get_by_any(lookup)
     out_string = "```\n"
     out_string += "Name: " + hub['name'] + "\n"
     out_string += "Kurzform: " + hub['short']  + "\n"

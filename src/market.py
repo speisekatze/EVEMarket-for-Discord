@@ -6,6 +6,7 @@ from conf import regions, itemnames
 from conf.config import market as marketconfig
 from terminaltables import AsciiTable
 import locale
+import time
 
 locale.setlocale(locale.LC_ALL, "de_DE")
 
@@ -31,10 +32,9 @@ def get_order_detail(order):
 
 
 def get_region_id(region):
-    regionlist = helper.itemlist(regions.regions)
     if region == "":
         region = "The Forge"
-    return regionlist.get_by_name(region)
+    return helper.regions.get_by('name', region)['id']
 
 
 def find_deal(order_type, type_name, region=""):
@@ -55,9 +55,9 @@ def scan_hub(itemlist: helper.itemlist, value=""):
     key = 'short'
     if value == "":
         value = "Jita"
-    if value in tradehubs.hubs.get_possible_values('enum'):
+    if value in tradehubs.hublist.get_possible_values('enum'):
         key = 'enum'
-    hub = tradehubs.hubs.get_by(key, value)
+    hub = tradehubs.hublist.get_by(key, value)
     return scan(itemlist, hub['region'], hub['id'])
 
 def scan(itemlist: helper.itemlist, region="", station=0):
@@ -123,8 +123,9 @@ def get_esi_id(eve, type_name):
 
 def get_esi_name(eve, type_id):
     data = "[ " + str(type_id) + " ]"
-    result = eve.request("ids", {}, data)
+    result = eve.request("names", {}, data)
     types = json.loads(result)
+    print(result)
     if "name" in types[0]:
         return types[0]["name"]
     else:
@@ -138,6 +139,7 @@ def get_distance(eve, target):
 
 
 def get_location(eve, location_id):
+    print(location_id)
     if location_id >= 4294967295:
         return "Eine Station eines Spielers"
     else:
@@ -188,21 +190,41 @@ async def pricelist(message, types="", region="", hub=""):
         "gas": {"i": itemnames.gas, "name": "gas"},
         "fullerite": {"i": itemnames.fullerite, "name": "fullerite"},
     }
-    if types not in types_switch:
+    if types.lower() not in [x.lower() for x in types_switch]:
         await message.edit(content="Unbekannte Kategorie angegeben. (!typen für eine Übersicht)")
         return ""
+    typ = types_switch[types]
+    if hub == "":
+        return await prices_region(message, typ, region)
+    return await prices_station(message, typ, hub)
+
+async def prices_region(message, typ, region=""):
     if region == "":
         region = "The Forge"
-    items = helper.itemlist(types_switch[types]["i"])
-    cache_name = types_switch[types]["name"]
+    cache_name = typ["name"].lower()
+    items = helper.itemlist(typ['i']) 
     cache_store = helper.cache.get(cache_name, region)
     if cache_store is None:
         await message.edit(content="Hole frische Daten")
-        if hub != "":
-            data = scan_hub(items, hub)    
-        else:
-            data = scan(items, region)
+        data = scan(items, region)
         cache_store = helper.cache.set(cache_name, region, data)
+    else:
+        age = str(int((time.time() - cache_store["ts"]) / 60))
+        await message.edit(content="Hole Daten aus Cache (" + age + " Minuten alt)")
+    return cache_store["data"]
+
+async def prices_station(message, typ, station):
+    if station == "":
+        station = "Jita"
+    hub = tradehubs.hublist.get_by_any(station)
+
+    cache_name = typ["name"].lower()
+    items = helper.itemlist(typ['i']) 
+    cache_store = helper.cache.get(cache_name, hub['id'])
+    if cache_store is None:
+        await message.edit(content="Hole frische Daten")
+        data = scan(items, hub['region'], hub['id'])
+        cache_store = helper.cache.set(cache_name, hub['id'], data)
     else:
         age = str(int((time.time() - cache_store["ts"]) / 60))
         await message.edit(content="Hole Daten aus Cache (" + age + " Minuten alt)")

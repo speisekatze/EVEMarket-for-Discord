@@ -40,20 +40,34 @@ class list:
         for k in self.keys:
             self.store[k] = {}
             for item in itemdict:
-                self.store[k][str(item[k])] = item
+                self.store[k.lower()][str(item[k]).lower()] = item
 
     def get_by(self, key, value):
-        if key not in self.keys or value not in self.store[key]:
+        key = key.lower()
+        value = value.lower()
+        if (key not in [x.lower() for x in self.keys] 
+           or value not in [x.lower() for x in self.store[key.lower()]]):
             return None
         return self.store[key][value]
 
+    def get_by_any(self, value):
+        it = None
+        value = value.lower()
+        for key in self.keys:
+            if value in [x.lower() for x in self.get_possible_values(key)]:
+                it = self.get_by(key, value)
+                break
+        return it
+
     def get_all(self, key):
-        if key not in self.keys:
+        key = key.lower()
+        if key not in [x.lower() for x in self.keys]:
             return None
         return self.store[key].values()
 
     def get_possible_values(self, key):
-        if key not in self.keys:
+        key = key.lower()
+        if key not in [x.lower() for x in self.keys]:
             return None
         return self.store[key].keys()
 
@@ -88,7 +102,7 @@ def find_max(market, station=0):
     order = {"price": 0.00}
     for m in market:
         if (float(m["price"]) > float(order["price"])) and (
-            station == 0 or m["location"] == station
+            station == 0 or m["location_id"] == station
         ):
             order = m
     return order
@@ -99,7 +113,7 @@ def find_min(market, station=0):
     for m in market:
         if (
             float(order["price"]) == 0.00 or float(m["price"]) < float(order["price"])
-        ) and (station == 0 or m["location"] == station):
+        ) and (station == 0 or m["location_id"] == station):
             order = m
     return order
 
