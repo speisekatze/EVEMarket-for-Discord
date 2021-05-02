@@ -40,7 +40,7 @@ class list:
         for k in self.keys:
             self.store[k] = {}
             for item in itemdict:
-                self.store[k][item[k]] = item
+                self.store[k][str(item[k])] = item
 
     def get_by(self, key, value):
         if key not in self.keys or value not in self.store[key]:
@@ -50,7 +50,7 @@ class list:
     def get_all(self, key):
         if key not in self.keys:
             return None
-        return self.store[key]
+        return self.store[key].values()
 
     def get_possible_values(self, key):
         if key not in self.keys:
@@ -59,6 +59,9 @@ class list:
 
     def get_keys(self):
         return self.keys
+    
+    def dump(self):
+        return self.store
 
 class _cache:
     store = {}
@@ -103,4 +106,4 @@ def find_min(market, station=0):
 
 cache = _cache()
 regions = list(data.regions)
-hubs = list(data.hubs)
+
