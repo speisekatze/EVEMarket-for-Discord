@@ -1,8 +1,8 @@
 import http.client
 import json
 from src.esi import esi
-from src import helper
-from conf import regions
+from src import helper, tradehubs
+from conf import regions, itemnames
 from conf.config import market as marketconfig
 from terminaltables import AsciiTable
 import locale
@@ -51,13 +51,13 @@ def find_deal(order_type, type_name, region=""):
         order = helper.find_min(get_orders(eve, regionid, type_id, "sell"))
     return order
 
-def tradehub(itemlist: helper.itemlist, value=""):
+def scan_hub(itemlist: helper.itemlist, value=""):
     key = 'short'
     if value == "":
         value = "Jita"
-    if value in helper.hubs.get_possible_values('enum'):
+    if value in tradehubs.hubs.get_possible_values('enum'):
         key = 'enum'
-    hub = helper.hubs.get_by(key, value)
+    hub = tradehubs.hubs.get_by(key, value)
     return scan(itemlist, hub['region'], hub['id'])
 
 def scan(itemlist: helper.itemlist, region="", station=0):
@@ -81,7 +81,7 @@ def scan(itemlist: helper.itemlist, region="", station=0):
     t.title = region
     if station != 0:
         t.title = get_location(eve, station)
-    out_string = "```" + t.table + "```"
+    out_string = "```\n" + t.table + "```"
     return out_string
 
 
@@ -167,3 +167,43 @@ def query(eve, typ, id):
         return None
     result = eve.request(typ, {typ: id})
     return json.loads(result)
+
+
+async def pricelist(message, types="", region="", hub=""):
+    if types == "":
+        await message.edit(content="Keine Kategorie angegeben. (!markt erze [The Forge])")
+        return ""
+    types_switch = {
+        "erz": {"i": itemnames.ores, "name": "ore"},
+        "erze": {"i": itemnames.ores, "name": "ore"},
+        "e": {"i": itemnames.ores, "name": "ore"},
+        "ore": {"i": itemnames.ores, "name": "ore"},
+        "ores": {"i": itemnames.ores, "name": "ore"},
+        "o": {"i": itemnames.ores, "name": "ore"},
+        "minerals": {"i": itemnames.minerals, "name": "mineral"},
+        "mineral": {"i": itemnames.minerals, "name": "mineral"},
+        "m": {"i": itemnames.minerals, "name": "mineral"},
+        "moon": {"i": itemnames.moon, "name": "moon"},
+        "mond": {"i": itemnames.moon, "name": "moon"},
+        "gas": {"i": itemnames.gas, "name": "gas"},
+        "fullerite": {"i": itemnames.fullerite, "name": "fullerite"},
+    }
+    if types not in types_switch:
+        await message.edit(content="Unbekannte Kategorie angegeben. (!typen für eine Übersicht)")
+        return ""
+    if region == "":
+        region = "The Forge"
+    items = helper.itemlist(types_switch[types]["i"])
+    cache_name = types_switch[types]["name"]
+    cache_store = helper.cache.get(cache_name, region)
+    if cache_store is None:
+        await message.edit(content="Hole frische Daten")
+        if hub != "":
+            data = scan_hub(items, hub)    
+        else:
+            data = scan(items, region)
+        cache_store = helper.cache.set(cache_name, region, data)
+    else:
+        age = str(int((time.time() - cache_store["ts"]) / 60))
+        await message.edit(content="Hole Daten aus Cache (" + age + " Minuten alt)")
+    return cache_store["data"]
