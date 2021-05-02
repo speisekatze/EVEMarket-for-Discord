@@ -126,7 +126,7 @@ hubs = [
         "id": 60001096,
         "name": "Tash-Murkon Prime II - Moon 1 - Kaalakiota Corporation Factory",
         "enum": 3,
-        "short": "Tash-Murkon",
+        "short": "TMP",
         "region": "Tash-Murkon",
     },
     {
