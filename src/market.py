@@ -125,7 +125,6 @@ def get_esi_name(eve, type_id):
     data = "[ " + str(type_id) + " ]"
     result = eve.request("names", {}, data)
     types = json.loads(result)
-    print(result)
     if "name" in types[0]:
         return types[0]["name"]
     else:
@@ -139,7 +138,6 @@ def get_distance(eve, target):
 
 
 def get_location(eve, location_id):
-    print(location_id)
     if location_id >= 4294967295:
         return "Eine Station eines Spielers"
     else:
