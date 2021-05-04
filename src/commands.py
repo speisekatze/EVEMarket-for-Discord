@@ -92,3 +92,10 @@ async def tradehub(ctx, aktion, hub=""):
 async def shutdown(ctx):
     await ctx.send("Bye")
     await bot.close()
+
+@bot.command()
+async def hilfe(ctx, *args):
+    # !hilfe
+    # !hilfe befehl
+    pass
+
