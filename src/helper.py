@@ -40,9 +40,20 @@ class list:
         for k in self.keys:
             self.store[k] = {}
             for item in itemdict:
-                self.store[k.lower()][str(item[k]).lower()] = item
-
+                j = str(item[k]).lower()
+                if j not in self.store[k.lower()]:
+                    self.store[k.lower()][j] = []
+                self.store[k.lower()][j].append(item)
+                
     def get_by(self, key, value):
+        key = key.lower()
+        value = value.lower()
+        if (key not in [x.lower() for x in self.keys] 
+           or value not in [x.lower() for x in self.store[key.lower()]]):
+            return None
+        return self.store[key][value][0]
+
+    def get_by_full(self, key, value):
         key = key.lower()
         value = value.lower()
         if (key not in [x.lower() for x in self.keys] 
@@ -120,4 +131,3 @@ def find_min(market, station=0):
 
 cache = _cache()
 regions = list(data.regions)
-

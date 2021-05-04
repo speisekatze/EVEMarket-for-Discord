@@ -7,7 +7,8 @@ hublist = helper.list(hubs)
 def list_command(nothing):
     m = [ ["Nummer", "Kurzform", "Region", "Name"], ]
     for hub in hublist.get_all('id'):
-        m.append([ str(hub["enum"]), hub["short"], hub["region"], hub["name"] ])
+        for a in hub:
+            m.append([ str(a["enum"]), a["short"], a["region"], a["name"] ])
     t = AsciiTable(m)
     t.justify_columns[1] = "left"
     t.justify_columns[2] = "left"
