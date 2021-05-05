@@ -6,36 +6,42 @@ import locale
 
 locale.setlocale(locale.LC_ALL, "de_DE")
 bot = commands.Bot(command_prefix='!')
+cache_info="Ergebnisse werden für 1 Stunde zwischengespeichert.\nErst nach ablauf der Stunde werden neue Informationen vom Eve-Online Server geholt.\nDas Alter der angezeigten Daten wird angegeben."
+region_info="\nStandardregion für den Befehl ist: " + helper.regions.get_by('id', market.marketconfig.region)['name']
 
 def user_is_owner(ctx):
     return ctx.message.author.id == market.marketconfig.owner 
 
-@bot.command(description="Kurzform für !markt erze")
+@bot.command(description=cache_info+region_info)
 async def erze(ctx):
+    """ Kurzform für !markt erze """
     tmp = await ctx.send(
         "Hole Daten. Das wird ein paar Sekunden dauern."
     )
     data = await market.pricelist(tmp, 'erze')
     await ctx.send(data)
 
-@bot.command(description="Kurzform für !markt mineral")
+@bot.command(description=cache_info+region_info)
 async def mineral(ctx):
+    """ Kurzform für !markt mineral """
     tmp = await ctx.send(
         "Hole Daten. Das wird ein paar Sekunden dauern."
     )
     data = await market.pricelist(tmp, 'mineral')
     await ctx.send(data)
 
-@bot.command(description="Kurzform für !markt mond")
+@bot.command(description=cache_info+region_info)
 async def mond(ctx):
+    """ Kurzform für !markt mond """
     tmp = await ctx.send(
         "Hole Daten. Das wird ein paar Sekunden dauern."
     )
     data = await market.pricelist(tmp, 'mond')
     await ctx.send(data)
 
-@bot.command(description="Liefert eine Liste aktueller Ver/Einkaufspreise aus der Region")
+@bot.command(description="Für eine Liste bekannter Kategorien: !typen \n\n" + cache_info + region_info)
 async def markt(ctx, kategorien, *region):
+    """ Liefert eine Liste aktueller Ver/Einkaufspreise aus der Region """
     tmp = await ctx.send(
         "Hole Daten. Das wird ein paar Sekunden dauern."
     )
@@ -43,16 +49,18 @@ async def markt(ctx, kategorien, *region):
     data = await market.pricelist(tmp, kategorien, _region)
     await ctx.send(data)
 
-@bot.command(description="Liefert eine Liste aktueller Ver/Einkaufspreise von einem Tradehubs (!tradehubs list)")
+@bot.command(description="Für eine Liste bekannter Hubs: !tradehubs \n\n" + cache_info)
 async def hub(ctx, hub, kategorien):
+    """ Liefert eine Liste aktueller Ver/Einkaufspreise von einem Tradehub """
     tmp = await ctx.send(
         "Hole Daten. Das wird ein paar Sekunden dauern."
     )
     data = await market.pricelist(tmp, kategorien, "", hub)
     await ctx.send(data)
 
-@bot.command(description="Liefert eine Liste verfügbarer Kategorien für !markt")
+@bot.command()
 async def typen(ctx):
+    """ Liefert eine Liste verfügbarer Kategorien für !markt """
     text = "Verfügbare Kategorien \n"
     text += "```\n"
     text += " * erz, erze, ore, ores - Normale Erze von Asteroiden (Veldspar, Scordite, ..)\n"
@@ -62,8 +70,11 @@ async def typen(ctx):
     text += "```\n"
     await ctx.send(text)
 
-@bot.command(description="Sucht das beste Ver/Ankaufs-Angebot in der Region\nEnthält die Ware Leerzeichen, den Namen in \" schreiben.\n !deal buy \"Compressed Veldspar\" Sinq Laison")
-async def deal(ctx, art, ware, *region):    
+@bot.command(description="Enthält die Ware Leerzeichen, den Namen in \" schreiben.\n!deal buy \"Compressed Veldspar\" Sinq Laison" + region_info)
+async def deal(ctx, art, ware, *region):
+    """ Sucht das beste Ver/Ankaufs-Angebot in der Region """
+    """ Enthält die Ware Leerzeichen, den Namen in \" schreiben.
+        !deal buy \"Compressed Veldspar\" Sinq Laison """
     if art not in ['buy', 'sell']:
         await ctx.send("!deal <buy|sell> <Ware>")
     _region = " ".join(region)
@@ -81,16 +92,18 @@ async def deal(ctx, art, ware, *region):
 
 @bot.group(name="tradehubs")
 async def tr(ctx: commands.Context):
-    """ List known Tradehubs or show some info about """
+    """ Liefert eine Liste bekannter Tradehubs oder zeigt Informationen zu einem Hub an. """
     if ctx.invoked_subcommand is None:
-        await ctx.send('Shh!', delete_after=5)
+        list_hubs(ctx)
 
 @tr.command(name="list")
 async def list_hubs(ctx):
+    """ Liste der bekannten Hubs """
     await ctx.send(tradehubs.list_command())
 
 @tr.command(name="info")
 async def info_hubs(ctx, hub):
+    """ Informationen zum Hub """
     await ctx.send(tradehubs.info_command(hub))
 
 @bot.command()
@@ -99,9 +112,12 @@ async def shutdown(ctx):
     await ctx.send("Bye")
     await bot.close()
 
-@bot.command()
-async def hilfe(ctx, *args):
-    # !hilfe
-    # !hilfe befehl
-    pass
 
+@bot.command(name='regionen', description="Regionsklassen sind: empire, outlaw, wh, unknown\nWird keine Klasse angegeben, werden die Empire-Regionen angezeigt")
+async def region_command(ctx, Klasse='empire'):
+    """ Eine Liste bekannter Regionen """
+    out_string = "```\n"
+    for region in helper.regions.get_by_full('class', Klasse):
+        out_string += region["name"] + "\n"
+    out_string += "```\n"
+    await ctx.send(out_string)
