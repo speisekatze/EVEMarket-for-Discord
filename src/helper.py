@@ -47,7 +47,7 @@ class list:
                 
     def get_by(self, key, value):
         key = key.lower()
-        value = value.lower()
+        value = str(value).lower()
         if (key not in [x.lower() for x in self.keys] 
            or value not in [x.lower() for x in self.store[key.lower()]]):
             return None
