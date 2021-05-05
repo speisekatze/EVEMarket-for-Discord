@@ -78,14 +78,20 @@ async def deal(ctx, art, ware, *region):
         await ctx.send("{0} ISK".format(price))
         await ctx.send(market.get_order_detail(order))
 
-@bot.command(name="tradehubs")
-async def tradehub(ctx, aktion, hub=""):
-    actions = {
-        "list": tradehubs.list_command,
-        "info": tradehubs.info_command,
-    }
-    if aktion in actions:
-        await ctx.send(actions[aktion](hub))
+
+@bot.group(name="tradehubs")
+async def tr(ctx: commands.Context):
+    """ List known Tradehubs or show some info about """
+    if ctx.invoked_subcommand is None:
+        await ctx.send('Shh!', delete_after=5)
+
+@tr.command(name="list")
+async def list_hubs(ctx):
+    await ctx.send(tradehubs.list_command())
+
+@tr.command(name="info")
+async def info_hubs(ctx, hub):
+    await ctx.send(tradehubs.info_command(hub))
 
 @bot.command()
 @commands.check(user_is_owner)

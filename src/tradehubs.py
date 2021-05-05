@@ -4,7 +4,7 @@ from terminaltables import AsciiTable
 
 hublist = helper.list(hubs)
 
-def list_command(nothing):
+def list_command():
     m = [ ["Nummer", "Kurzform", "Region", "Name"], ]
     for hub in hublist.get_all('id'):
         for a in hub:
